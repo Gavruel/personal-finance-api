@@ -2,10 +2,7 @@ package com.gsantos.personalfinanceapi.model.entities;
 
 import com.gsantos.personalfinanceapi.model.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -13,7 +10,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
+@EqualsAndHashCode(of = "id")
+@Table (name = "categories", uniqueConstraints = {
+@UniqueConstraint (columnNames = {"name", "user_id"})})
 @Entity
 public class Category {
 
@@ -21,14 +20,14 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionType type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
