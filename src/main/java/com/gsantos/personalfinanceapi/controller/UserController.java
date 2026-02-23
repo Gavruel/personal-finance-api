@@ -2,14 +2,16 @@ package com.gsantos.personalfinanceapi.controller;
 
 import com.gsantos.personalfinanceapi.dto.UserRequestDTO;
 import com.gsantos.personalfinanceapi.dto.UserResponseDTO;
+import com.gsantos.personalfinanceapi.dto.UserUpdateDTO;
 import com.gsantos.personalfinanceapi.model.entities.User;
+import com.gsantos.personalfinanceapi.repository.UserRepository;
 import com.gsantos.personalfinanceapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.gsantos.personalfinanceapi.repository.UserRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -39,6 +41,30 @@ public class UserController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id,
+                                           @RequestBody @Valid UserUpdateDTO data) {
+
+        Optional<User> userOptional = userService.findById(id);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = userOptional.get();
+
+        user.setName(data.name());
+        user.setEmail(data.email());
+
+        if (data.password() != null && !data.password().isBlank()) {
+            user.setPassword(data.password());
+        }
+
+        userService.saveUser(user);
+
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping
