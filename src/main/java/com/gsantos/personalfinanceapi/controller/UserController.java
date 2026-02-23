@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +24,19 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
+
+        List<User> users = userService.findAllUsers();
+
+        List<UserResponseDTO> response = users.stream().map(user -> new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        )).toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/NewUser")

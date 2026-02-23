@@ -1,10 +1,13 @@
 package com.gsantos.personalfinanceapi.service;
 
+import com.gsantos.personalfinanceapi.dto.UserRequestDTO;
+import com.gsantos.personalfinanceapi.dto.UserResponseDTO;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +25,10 @@ public class UserService {
         return repository.save(user);
     }
 
+    public List<User> findAllUsers() {
+        return repository.findAll();
+    }
+
     public User findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("Email not found")
@@ -32,7 +39,7 @@ public class UserService {
         return repository.findById(id);
     }
 
-    public User UpdateUser(User user) {
+    public User updateUser(User user) {
         return repository.save(user);
     }
 
