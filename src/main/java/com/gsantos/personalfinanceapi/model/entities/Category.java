@@ -20,7 +20,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = false)
     private String name;
 
     @Enumerated(EnumType.STRING)

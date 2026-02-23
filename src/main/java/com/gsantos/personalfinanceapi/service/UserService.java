@@ -4,6 +4,7 @@ import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @Service
 public class UserService {
@@ -23,5 +24,10 @@ public class UserService {
         return repository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("Email não encontrado")
         );
+    }
+
+    @Transactional
+    public void deleteByEmail(String email) {
+        repository.deleteByEmail(email);
     }
 }

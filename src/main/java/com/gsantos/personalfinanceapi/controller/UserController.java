@@ -7,10 +7,11 @@ import com.gsantos.personalfinanceapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.gsantos.personalfinanceapi.repository.UserRepository;
+
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/NewUser")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserRequestDTO data) {
         User newUser = new User();
         newUser.setName(data.name());
@@ -37,6 +38,12 @@ public class UserController {
                 savedUser.getEmail()
         );
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteByEmail(@RequestParam String email) {
+        userService.deleteByEmail(email);
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
