@@ -1,10 +1,9 @@
 package com.gsantos.personalfinanceapi.controller;
 
-import com.gsantos.personalfinanceapi.dto.UserRequestDTO;
-import com.gsantos.personalfinanceapi.dto.UserResponseDTO;
-import com.gsantos.personalfinanceapi.dto.UserUpdateDTO;
+import com.gsantos.personalfinanceapi.dto.user.UserRequestDTO;
+import com.gsantos.personalfinanceapi.dto.user.UserResponseDTO;
+import com.gsantos.personalfinanceapi.dto.user.UserUpdateDTO;
 import com.gsantos.personalfinanceapi.model.entities.User;
-import com.gsantos.personalfinanceapi.repository.UserRepository;
 import com.gsantos.personalfinanceapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 

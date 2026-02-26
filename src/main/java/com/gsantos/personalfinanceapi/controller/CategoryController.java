@@ -18,7 +18,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping
+    @PostMapping("/users/{userId}/categories")
     public ResponseEntity<Category> save(
             @RequestBody Category category,
             @RequestParam String userEmail) {

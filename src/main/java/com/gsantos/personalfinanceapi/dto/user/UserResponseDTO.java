@@ -1,6 +1,4 @@
-package com.gsantos.personalfinanceapi.dto;
-
-import jakarta.validation.constraints.NotNull;
+package com.gsantos.personalfinanceapi.dto.user;
 
 import java.util.UUID;
 

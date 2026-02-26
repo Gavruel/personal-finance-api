@@ -1,7 +1,7 @@
 package com.gsantos.personalfinanceapi.service;
 
 
-import com.gsantos.personalfinanceapi.dto.UserUpdateDTO;
+import com.gsantos.personalfinanceapi.dto.user.UserUpdateDTO;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.UserRepository;
 import jakarta.transaction.Transactional;

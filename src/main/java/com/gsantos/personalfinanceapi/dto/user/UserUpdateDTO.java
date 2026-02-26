@@ -1,4 +1,4 @@
-package com.gsantos.personalfinanceapi.dto;
+package com.gsantos.personalfinanceapi.dto.user;
 
 import jakarta.validation.constraints.Size;
 
