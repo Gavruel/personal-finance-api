@@ -81,9 +81,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteByEmail(@RequestParam String email) {
-        userService.deleteByEmail(email);
-        return ResponseEntity.ok("User deleted successfully");
+    @DeleteMapping ("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

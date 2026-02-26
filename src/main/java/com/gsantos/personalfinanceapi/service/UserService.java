@@ -1,7 +1,6 @@
 package com.gsantos.personalfinanceapi.service;
 
-import com.gsantos.personalfinanceapi.dto.UserRequestDTO;
-import com.gsantos.personalfinanceapi.dto.UserResponseDTO;
+
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -43,7 +42,8 @@ public class UserService {
         return repository.save(user);
     }
 
-    public void deleteByEmail(String email) {
-        repository.deleteByEmail(email);
+    @Transactional
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
     }
 }
