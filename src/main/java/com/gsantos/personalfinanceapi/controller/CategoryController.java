@@ -41,7 +41,7 @@ public class CategoryController {
 
     @GetMapping("/users/{userId}/categories")
     public ResponseEntity<List<CategoryResponseDTO>> listByUser(@PathVariable UUID userId) {
-        List<Category> categories = categoryService.findByUserId(userId);
+        List<Category> categories = categoryService.findCategoryByUserId(userId);
 
         List<CategoryResponseDTO> response = categories.stream()
                 .map(c -> new CategoryResponseDTO(

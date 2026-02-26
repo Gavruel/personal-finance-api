@@ -52,6 +52,12 @@ public class UserService {
     }
 
     @Transactional
+    public User findById(UUID id) {
+        return repository.findById(id).orElseThrow(()->
+                new RuntimeException("User not found"));
+    }
+
+    @Transactional
     public void deleteById(UUID id) {
         repository.deleteById(id);
     }

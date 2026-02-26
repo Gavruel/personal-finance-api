@@ -24,23 +24,24 @@ public class CategoryService {
 
     @Transactional
     public Category createCategory(CategoryRequestDTO data, UUID userId) {
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findById(userId);
 
         Category category = new Category();
-        category.setName(data.getName());
-        category.setType(data.getType());
+        category.setName(data.name());
+        category.setType(data.type());
         category.setUser(user);
 
         return categoryRepository.save(category);
     }
 
     @Transactional
-    public List<Category> findByUserId(UUID userId) {
+    public List<Category> findCategoryByUserId(UUID userId) {
         List<Category> categories = categoryRepository.findAllByUserId(userId);
 
         return categories;
     }
+
+
 
     @Transactional
     public List<Category> findByUserEmail(String email) {
