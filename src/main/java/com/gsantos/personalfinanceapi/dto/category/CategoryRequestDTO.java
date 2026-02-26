@@ -11,8 +11,5 @@ public record CategoryRequestDTO(
         String name,
 
         @NotNull
-        TransactionType type,
-
-        @NotNull
-        UUID userId
+        TransactionType type
 ) {}

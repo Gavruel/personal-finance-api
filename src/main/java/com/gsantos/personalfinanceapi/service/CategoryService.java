@@ -1,12 +1,13 @@
 package com.gsantos.personalfinanceapi.service;
 
+import com.gsantos.personalfinanceapi.dto.category.CategoryRequestDTO;
 import com.gsantos.personalfinanceapi.model.entities.Category;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
+import java.util.UUID;
 
 
 @Service
@@ -22,10 +23,23 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category createCategory(Category category, String userEmail) {
-        User user = userService.findByEmail(userEmail);
+    public Category createCategory(CategoryRequestDTO data, UUID userId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Category category = new Category();
+        category.setName(data.getName());
+        category.setType(data.getType());
         category.setUser(user);
+
         return categoryRepository.save(category);
+    }
+
+    @Transactional
+    public List<Category> findByUserId(UUID userId) {
+        List<Category> categories = categoryRepository.findAllByUserId(userId);
+
+        return categories;
     }
 
     @Transactional

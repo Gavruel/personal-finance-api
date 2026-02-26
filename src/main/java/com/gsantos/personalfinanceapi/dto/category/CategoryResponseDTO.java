@@ -9,5 +9,5 @@ public record CategoryResponseDTO(
         UUID id,
         String name,
         TransactionType type,
-        User userId
+        UUID userId
 ) {}
