@@ -58,27 +58,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id,
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID id,
                                            @RequestBody @Valid UserUpdateDTO data) {
 
-        Optional<User> userOptional = userService.findById(id);
+        User updateUser = userService.updateUser(id, data);
 
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        UserResponseDTO response = new UserResponseDTO(
+                updateUser.getId(),
+                updateUser.getName(),
+                updateUser.getEmail()
+        );
 
-        User user = userOptional.get();
-
-        user.setName(data.name());
-        user.setEmail(data.email());
-
-        if (data.password() != null && !data.password().isBlank()) {
-            user.setPassword(data.password());
-        }
-
-        userService.saveUser(user);
-
-        return ResponseEntity.ok(user);
+        return  ResponseEntity.ok(response);
     }
 
     @DeleteMapping ("/{id}")
