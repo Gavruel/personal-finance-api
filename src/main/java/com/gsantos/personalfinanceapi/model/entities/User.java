@@ -18,12 +18,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "",nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "",nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "",nullable = false)
+    @Column(nullable = false)
     private String password;
 }
