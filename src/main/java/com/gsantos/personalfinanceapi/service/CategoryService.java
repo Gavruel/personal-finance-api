@@ -1,14 +1,15 @@
 package com.gsantos.personalfinanceapi.service;
 
 import com.gsantos.personalfinanceapi.dto.category.CategoryRequestDTO;
+import com.gsantos.personalfinanceapi.exception.ResourceNotFoundException;
 import com.gsantos.personalfinanceapi.model.entities.Category;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.UUID;
-
 
 @Service
 public class CategoryService {
@@ -36,20 +37,20 @@ public class CategoryService {
 
     @Transactional
     public List<Category> findCategoryByUserId(UUID userId) {
-        List<Category> categories = categoryRepository.findAllByUserId(userId);
+        // Ensures the user exists before querying categories
+        userService.findById(userId);
 
-        return categories;
+        return categoryRepository.findAllByUserId(userId);
     }
-
-
 
     @Transactional
     public List<Category> findByUserEmail(String email) {
         List<Category> categories = categoryRepository.findAllByUserEmail(email);
 
         if (categories.isEmpty()) {
-            throw new RuntimeException("No categories found for this user");
+            throw new ResourceNotFoundException("No categories found for user with email: " + email);
         }
+
         return categories;
     }
 }
