@@ -13,7 +13,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 - Resource not found
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleNotFound(
             ResourceNotFoundException ex,
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // 409 - Resource already exists (duplicate)
+
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> handleAlreadyExists(
             ResourceAlreadyExistsException ex,
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // 422 - Bean Validation errors (@Valid)
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidation(
             MethodArgumentNotValidException ex,
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
-    // 409 - Database constraint violation (e.g. duplicate email or category name)
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(
             DataIntegrityViolationException ex,
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
 
         String message = "Data integrity violation. Check for duplicate values.";
 
-        // Detect common constraint violations and give a friendlier message
+
         if (ex.getMessage() != null) {
             String msg = ex.getMessage().toLowerCase();
             if (msg.contains("users") && msg.contains("email")) {
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // 500 - Unexpected errors
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(
             Exception ex,

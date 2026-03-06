@@ -37,7 +37,6 @@ public class CategoryService {
 
     @Transactional
     public List<Category> findCategoryByUserId(UUID userId) {
-        // Ensures the user exists before querying categories
         userService.findById(userId);
 
         return categoryRepository.findAllByUserId(userId);
