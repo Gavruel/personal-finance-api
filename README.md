@@ -1,24 +1,25 @@
-#  Personal Finance API
+# Personal Finance API
 
-A RESTful API built with **Java Spring Boot** for personal finance management. The system allows users to register, authenticate, and manage custom transaction categories (income and expenses), laying the foundation for a complete financial control application.
+A RESTful API built with **Java Spring Boot 4** for personal finance management. The system allows users to register, authenticate, manage transaction categories, and record financial transactions (income and expenses) with full validation and standardized error handling.
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
-- **Java 17+**
-- **Spring Boot**
+- **Java 21**
+- **Spring Boot 4.0.1**
 - **Spring Security** (HTTP Basic Auth)
-- **Spring Data JPA**
-- **Hibernate**
+- **Spring Data JPA / Hibernate**
 - **Argon2** (Password Hashing)
 - **Lombok**
 - **Bean Validation (Jakarta)**
-- **PostgreSQL** 
+- **PostgreSQL**
+- **SpringDoc OpenAPI 2.8.6** (Swagger UI)
+- **H2** (in-memory database for tests)
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 personalfinanceapi/
@@ -26,52 +27,65 @@ personalfinanceapi/
 │   ├── PasswordConfig.java
 │   └── SecurityConfig.java
 ├── controller/
-│   ├── AuthController.java
+│   ├── auth/
+│   │   └── AuthController.java
 │   ├── UserController.java
-│   └── CategoryController.java
+│   ├── CategoryController.java
+│   └── TransactionController.java
 ├── dto/
 │   ├── user/
-│   │   ├── CreateUserDTO.java
 │   │   ├── UserRequestDTO.java
 │   │   ├── UserResponseDTO.java
-│   │   └── UserUpdateDTO.java
-│   └── category/
-│       ├── CategoryRequestDTO.java
-│       └── CategoryResponseDTO.java
+│   │   ├── UserUpdateDTO.java
+│   │   └── CreateUserDTO.java
+│   ├── category/
+│   │   ├── CategoryRequestDTO.java
+│   │   └── CategoryResponseDTO.java
+│   └── transaction/
+│       ├── TransactionRequestDTO.java
+│       └── TransactionResponseDTO.java
+├── exception/
+│   ├── GlobalExceptionHandler.java
+│   ├── ErrorResponseDTO.java
+│   ├── ResourceNotFoundException.java
+│   └── ResourceAlreadyExistsException.java
 ├── model/
 │   ├── entities/
 │   │   ├── User.java
-│   │   └── Category.java
+│   │   ├── Category.java
+│   │   └── Transaction.java
 │   └── enums/
-│       └── TransactionType.java  # INCOME | EXPENSE
+│       └── TransactionType.java     # INCOME | EXPENSE
 ├── repository/
 │   ├── UserRepository.java
-│   └── CategoryRepository.java
+│   ├── CategoryRepository.java
+│   └── TransactionRepository.java
 ├── security/
 │   └── CustomUserDetailsService.java
 ├── service/
 │   ├── UserService.java
 │   ├── CategoryService.java
+│   ├── TransactionService.java
 │   └── PasswordService.java
 └── PersonalFinanceApiApplication.java
 ```
 
 ---
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Java 17+
+- Java 21+
 - Maven
-- A running database (PostgreSQL recommended)
+- PostgreSQL running locally
 
 ### Installation
 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/Gavruel/personalfinanceapi.git
+git clone https://github.com/your-username/personalfinanceapi.git
 cd personalfinanceapi
 ```
 
@@ -82,6 +96,7 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/personalfinance
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
+server.port=8080
 ```
 
 3. **Build and run**
@@ -94,17 +109,31 @@ The API will be available at `http://localhost:8080`.
 
 ---
 
-##  Authentication
+## Interactive Documentation (Swagger)
 
-This API uses **HTTP Basic Authentication**. After registering, include your credentials in every request to protected routes.
+Once the application is running, access the full interactive API documentation at:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+You can explore and test all endpoints directly in the browser — no external tools needed.
+
+> The Swagger UI and `/v3/api-docs` are public routes and do not require authentication.
+
+---
+
+## Authentication
+
+This API uses **HTTP Basic Authentication**. After registering, include your credentials (email + password) in every request to protected routes.
 
 > **Note:** The `/auth/register` endpoint is **public** — all other endpoints require authentication.
 
 ---
 
-##  API Reference
+## API Reference
 
-###  Auth
+### Auth
 
 #### Register a new user
 
@@ -112,13 +141,11 @@ This API uses **HTTP Basic Authentication**. After registering, include your cre
 POST /auth/register
 ```
 
-**Request Body:**
-
-| Field      | Type     | Constraints                           |
-| :--------- | :------- | :------------------------------------ |
-| `name`     | `string` | **Required**                          |
-| `email`    | `string` | **Required**. Must be a valid email   |
-| `password` | `string` | **Required**. Minimum 6 characters   |
+| Field      | Type     | Constraints                         |
+| :--------- | :------- | :---------------------------------- |
+| `name`     | `string` | **Required**                        |
+| `email`    | `string` | **Required**. Must be a valid email |
+| `password` | `string` | **Required**. Minimum 6 characters  |
 
 **Example:**
 ```json
@@ -140,9 +167,9 @@ POST /auth/register
 
 ---
 
-###  Users
+### Users
 
-> All user routes require **HTTP Basic Auth**.
+> All routes require **HTTP Basic Auth**.
 
 #### Get all users
 
@@ -161,36 +188,23 @@ GET /api/users
 ]
 ```
 
----
-
 #### Update a user
 
 ```http
 PUT /api/users/{id}
 ```
 
-| Parameter | Type     | Description                         |
-| :-------- | :------- | :---------------------------------- |
-| `id`      | `string` | **Required**. UUID of the user      |
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `id`      | `string` | **Required**. UUID of the user |
 
-**Request Body:**
+| Field      | Type     | Constraints                 |
+| :--------- | :------- | :-------------------------- |
+| `name`     | `string` | Optional                    |
+| `email`    | `string` | Optional                    |
+| `password` | `string` | Optional. Min 6 characters  |
 
-| Field      | Type     | Constraints                           |
-| :--------- | :------- | :------------------------------------ |
-| `name`     | `string` | Optional                              |
-| `email`    | `string` | Optional                              |
-| `password` | `string` | Optional. Minimum 6 characters       |
-
-**Response** `200 OK`:
-```json
-{
-  "id": "uuid",
-  "name": "Gabriel Updated",
-  "email": "newemail@email.com"
-}
-```
-
----
+**Response** `200 OK`
 
 #### Delete a user
 
@@ -198,34 +212,32 @@ PUT /api/users/{id}
 DELETE /api/users/{id}
 ```
 
-| Parameter | Type     | Description                         |
-| :-------- | :------- | :---------------------------------- |
-| `id`      | `string` | **Required**. UUID of the user      |
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `id`      | `string` | **Required**. UUID of the user |
 
 **Response** `204 No Content`
 
 ---
 
-###  Categories
+### Categories
 
-> All category routes require **HTTP Basic Auth**.
+> All routes require **HTTP Basic Auth**.
 
-#### Create a category for a user
+#### Create a category
 
 ```http
 POST /api/categories/users/{userId}/categories
 ```
 
-| Parameter | Type     | Description                           |
-| :-------- | :------- | :------------------------------------ |
-| `userId`  | `string` | **Required**. UUID of the user        |
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `userId`  | `string` | **Required**. UUID of the user |
 
-**Request Body:**
-
-| Field  | Type              | Constraints                            |
-| :----- | :---------------- | :------------------------------------- |
-| `name` | `string`          | **Required**                           |
-| `type` | `TransactionType` | **Required**. `INCOME` or `EXPENSE`    |
+| Field  | Type              | Constraints                         |
+| :----- | :---------------- | :---------------------------------- |
+| `name` | `string`          | **Required**                        |
+| `type` | `TransactionType` | **Required**. `INCOME` or `EXPENSE` |
 
 **Example:**
 ```json
@@ -245,61 +257,156 @@ POST /api/categories/users/{userId}/categories
 }
 ```
 
----
-
 #### Get all categories for a user
 
 ```http
 GET /api/categories/users/{userId}/categories
 ```
 
-| Parameter | Type     | Description                           |
-| :-------- | :------- | :------------------------------------ |
-| `userId`  | `string` | **Required**. UUID of the user        |
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `userId`  | `string` | **Required**. UUID of the user |
 
-**Response** `200 OK`:
-```json
-[
-  {
-    "id": "uuid",
-    "name": "Freelance",
-    "type": "INCOME",
-    "userId": "uuid"
-  },
-  {
-    "id": "uuid",
-    "name": "Groceries",
-    "type": "EXPENSE",
-    "userId": "uuid"
-  }
-]
-```
+**Response** `200 OK`
 
 ---
 
-##  Data Models
+### Transactions
+
+> All routes require **HTTP Basic Auth**.
+
+#### Create a transaction
+
+```http
+POST /api/transactions/users/{userId}
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `userId`  | `string` | **Required**. UUID of the user |
+
+| Field         | Type              | Constraints                                                      |
+| :------------ | :---------------- | :--------------------------------------------------------------- |
+| `description` | `string`          | **Required**                                                     |
+| `amount`      | `number`          | **Required**. Must be greater than `0.01`                        |
+| `date`        | `string`          | **Required**. Format: `YYYY-MM-DD`                               |
+| `type`        | `TransactionType` | **Required**. `INCOME` or `EXPENSE`                              |
+| `categoryId`  | `string`          | **Required**. UUID of an existing category belonging to the user |
+
+**Example:**
+```json
+{
+  "description": "Freelance project payment",
+  "amount": 1500.00,
+  "date": "2025-03-06",
+  "type": "INCOME",
+  "categoryId": "uuid"
+}
+```
+
+**Response** `201 Created`:
+```json
+{
+  "id": "uuid",
+  "description": "Freelance project payment",
+  "amount": 1500.00,
+  "date": "2025-03-06",
+  "type": "INCOME",
+  "userId": "uuid",
+  "categoryId": "uuid",
+  "categoryName": "Freelance"
+}
+```
+
+#### Get all transactions for a user
+
+```http
+GET /api/transactions/users/{userId}
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `userId`  | `string` | **Required**. UUID of the user |
+
+**Response** `200 OK`
+
+---
+
+## Error Handling
+
+All errors return a standardized JSON response:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "User not found with id: ...",
+  "path": "/api/users/...",
+  "timestamp": "2025-03-06T10:00:00",
+  "fieldErrors": null
+}
+```
+
+For validation errors (`422 Unprocessable Entity`), the `fieldErrors` array is populated:
+
+```json
+{
+  "status": 422,
+  "error": "Validation Error",
+  "message": "One or more fields are invalid",
+  "path": "/auth/register",
+  "timestamp": "2025-03-06T10:00:00",
+  "fieldErrors": [
+    { "field": "email", "message": "Invalid email address" },
+    { "field": "password", "message": "Password must be at least 6 characters long" }
+  ]
+}
+```
+
+| Status | Meaning                       |
+| :----- | :---------------------------- |
+| `404`  | Resource not found            |
+| `409`  | Conflict / duplicate resource |
+| `422`  | Validation error              |
+| `500`  | Unexpected internal error     |
+
+---
+
+## Data Models
 
 ### User
 
-| Field      | Type     | Notes                         |
-| :--------- | :------- | :---------------------------- |
-| `id`       | `UUID`   | Auto-generated                |
-| `name`     | `string` | Required                      |
-| `email`    | `string` | Required, unique              |
-| `password` | `string` | Hashed with Argon2            |
+| Field      | Type     | Notes              |
+| :--------- | :------- | :----------------- |
+| `id`       | `UUID`   | Auto-generated     |
+| `name`     | `string` | Required           |
+| `email`    | `string` | Required, unique   |
+| `password` | `string` | Hashed with Argon2 |
 
 ### Category
 
-| Field  | Type              | Notes                                        |
-| :----- | :---------------- | :------------------------------------------- |
-| `id`   | `UUID`            | Auto-generated                               |
-| `name` | `string`          | Max 100 chars. Unique per user               |
-| `type` | `TransactionType` | `INCOME` or `EXPENSE`                        |
-| `user` | `User`            | Many-to-one relationship                     |
+| Field  | Type              | Notes                          |
+| :----- | :---------------- | :----------------------------- |
+| `id`   | `UUID`            | Auto-generated                 |
+| `name` | `string`          | Max 100 chars. Unique per user |
+| `type` | `TransactionType` | `INCOME` or `EXPENSE`          |
+| `user` | `User`            | Many-to-one relationship       |
+
+### Transaction
+
+| Field         | Type              | Notes                            |
+| :------------ | :---------------- | :------------------------------- |
+| `id`          | `UUID`            | Auto-generated                   |
+| `description` | `string`          | Max 255 chars                    |
+| `amount`      | `BigDecimal`      | Precision 15, scale 2. Min 0.01  |
+| `date`        | `LocalDate`       | Required                         |
+| `type`        | `TransactionType` | `INCOME` or `EXPENSE`            |
+| `user`        | `User`            | Many-to-one relationship         |
+| `category`    | `Category`        | Many-to-one. Must belong to user |
 
 ---
 
-##  Security Details
+## Security Details
 
 - Passwords are hashed using **Argon2** with the following parameters:
   - Salt length: 16 bytes
@@ -309,25 +416,23 @@ GET /api/categories/users/{userId}/categories
   - Iterations: 3
 - CSRF is disabled (stateless REST API)
 - Authentication is performed via **email + password** (HTTP Basic)
+- Public routes: `/auth/register`, `/swagger-ui/**`, `/v3/api-docs/**`
 
 ---
 
-##  Roadmap
+## Roadmap
 
-- [ ] Transaction management (CRUD)
-- [ ] Financial reports and summaries
+- [x] User registration and authentication
+- [x] Category management (INCOME / EXPENSE)
+- [x] Transaction management
+- [x] Standardized error handling with `@ControllerAdvice`
+- [x] Interactive API documentation with Swagger / OpenAPI
+- [ ] Financial reports and summaries (balance, spending by category)
 - [ ] JWT-based authentication
-- [ ] Swagger / OpenAPI documentation
 - [ ] Docker support
 
 ---
 
-##  Contributing
+## Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
-
----
-
-##  License
-
-This project is open source and available under the [MIT License](LICENSE).
