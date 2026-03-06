@@ -8,14 +8,14 @@ A RESTful API built with **Java Spring Boot 4** for personal finance management.
 
 - **Java 21**
 - **Spring Boot 4.0.1**
-- **Spring Security** (HTTP Basic Auth)
+- **Spring Security** 
 - **Spring Data JPA / Hibernate**
-- **Argon2** (Password Hashing)
+- **Argon2** 
 - **Lombok**
 - **Bean Validation (Jakarta)**
 - **PostgreSQL**
-- **SpringDoc OpenAPI 2.8.6** (Swagger UI)
-- **H2** (in-memory database for tests)
+- **SpringDoc OpenAPI 2.8.6** 
+- **H2** 
 
 ---
 
