@@ -23,10 +23,10 @@ public class TransactionController {
 
     @PostMapping("users/{userId}")
     public ResponseEntity<TransactionResponseDTO> register(
-            @PathVariable UUID transactionId,
+            @PathVariable UUID userId,
             @RequestBody TransactionRequestDTO data) {
 
-        Transaction transaction = transactionService.createTransaction(data, transactionId);
+        Transaction transaction = transactionService.createTransaction(data, userId);
 
         TransactionResponseDTO response = new TransactionResponseDTO(
                 transaction.getId(),

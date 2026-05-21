@@ -13,7 +13,6 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleNotFound(
             ResourceNotFoundException ex,
@@ -29,7 +28,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> handleAlreadyExists(
             ResourceAlreadyExistsException ex,
@@ -44,7 +42,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidation(
@@ -67,7 +64,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
-
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(
@@ -95,7 +91,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(
