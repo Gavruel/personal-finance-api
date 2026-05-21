@@ -4,6 +4,9 @@ import com.gsantos.personalfinanceapi.dto.user.UserResponseDTO;
 import com.gsantos.personalfinanceapi.dto.user.UserUpdateDTO;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +24,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMe(
+            @AuthenticationPrincipal UserDetails userDetails ){
 
-        List<User> users = userService.findAllUsers();
+        User user = userService.findByEmail(userDetails.getUsername());
 
-        List<UserResponseDTO> response = users.stream().map(user ->
-                new UserResponseDTO(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail()
-                )
-        ).toList();
-
-        return ResponseEntity.ok(response);
+        return  ResponseEntity.ok(new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        ));
     }
 
     @PutMapping("/{id}")
