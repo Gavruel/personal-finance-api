@@ -5,7 +5,7 @@ import com.gsantos.personalfinanceapi.exception.ResourceAlreadyExistsException;
 import com.gsantos.personalfinanceapi.exception.ResourceNotFoundException;
 import com.gsantos.personalfinanceapi.model.entities.User;
 import com.gsantos.personalfinanceapi.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +62,7 @@ public class UserService {
         return repository.save(user);
     }
 
-    @Transactional
+    @Transactional (readOnly = true)
     public User findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
