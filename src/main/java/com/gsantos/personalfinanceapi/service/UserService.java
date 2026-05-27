@@ -33,10 +33,12 @@ public class UserService {
         return repository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public List<User> findAllUsers() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
